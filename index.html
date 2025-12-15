@@ -364,8 +364,8 @@
                 <div class="entry-badge">Read Paper #${index}</div>
                 <div class="row">
                     <div class="col-lg-7 mb-3 mb-lg-0">
-                        <label class="form-label">Paper Title or URL <span class="required-mark">*</span></label>
-                        <input type="text" class="form-control" name="read_paper_${index}" placeholder="Title or Link" required>
+                        <label class="form-label">Paper Homepage URL <span class="required-mark">*</span></label>
+                        <input type="url" class="form-control" name="read_paper_${index}" placeholder="e.g. https://arxiv.org/abs/2503.14476" required>
                     </div>
                     <div class="col-lg-5">
                         <label class="form-label">Expertise Rating <span class="required-mark">*</span></label>
@@ -422,12 +422,12 @@
                     // Iterate through each paper entry in the read container
                     const readEntries = document.querySelectorAll('#readPapersContainer .paper-entry');
                     readEntries.forEach(entry => {
-                        const titleInput = entry.querySelector('input[type="text"]');
+                        const urlInput = entry.querySelector('input[type="url"]');
                         const expertiseSelect = entry.querySelector('select');
 
-                        if (titleInput && titleInput.value.trim() && expertiseSelect && expertiseSelect.value) {
+                        if (urlInput && urlInput.value.trim() && expertiseSelect && expertiseSelect.value) {
                             readPapers.push({
-                                title: titleInput.value.trim(),
+                                url: urlInput.value.trim(),
                                 expertise: parseInt(expertiseSelect.value, 10)
                             });
                         }
