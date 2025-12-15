@@ -2,35 +2,36 @@
 
 This project is a web application designed to collect data for constructing a benchmark dataset for paper-reviewer matching algorithms.
 
+## Architecture
+
+This project uses a **Serverless Architecture** to be compatible with GitHub Pages:
+
+- **Frontend**: Static HTML/JS/CSS hosted on GitHub Pages.
+- **Backend/Database**: [Supabase](https://supabase.com) (PostgreSQL) handles data storage directly from the frontend via the JS Client.
+
 ## Project Structure
 
-- `public/`: Contains the frontend static files (HTML, CSS, JS).
-- `server.js`: Node.js Express server to handle data submissions.
-- `data/`: Stores the submitted survey data (excluded from version control for privacy).
+- `index.html`: The main entry point of the application.
+- `data/`: (Legacy) Local data folder, no longer used in production.
 
 ## Setup & Run Locally
 
-1. **Install Dependencies:**
-   ```bash
-   npm install
-   ```
+1. **Clone the repository.**
+2. **Open `index.html`** directly in your browser.
+   - Alternatively, you can use a simple HTTP server.
 
-2. **Start the Server:**
-   ```bash
-   npm start
-   ```
+## Deployment (GitHub Pages)
 
-3. **Access the Survey:**
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+1. Go to your GitHub Repository settings.
+2. Navigate to **Pages**.
+3. Under **Source**, select `Deploy from a branch`.
+4. Select `main` branch and `/root` folder.
+5. Your site will be available at `https://<username>.github.io/<repo>/`.
 
-## Deployment
+## Data Storage
 
-### Option 1: Node.js Hosting (Recommended)
-Deploy this repository to a service that supports Node.js (e.g., Render, Railway, Heroku).
-- **Build Command:** `npm install`
-- **Start Command:** `npm start`
-- **Data Persistence:** Note that ephemeral file systems (like Heroku's) will wipe the `data/` folder on restart. For production, consider modifying `server.js` to save to a database (MongoDB/PostgreSQL) or cloud storage (S3).
-
-### Option 2: GitHub Pages (Static Only)
-**Note:** This project currently uses a Node.js backend (`server.js`) to handle submissions. GitHub Pages **cannot** run this backend.
-If you deploy to GitHub Pages, the "Submit" button will fail unless you refactor the frontend to use a third-party form service (like Formspree) instead of the local API.
+Data is stored in a Supabase table named `submissions` with the following schema:
+- `email`: Text
+- `profile_link`: Text
+- `own_papers`: JSONB Array
+- `read_papers`: JSONB Array

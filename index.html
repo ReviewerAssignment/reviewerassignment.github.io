@@ -211,7 +211,8 @@
 
                 <div class="row g-4">
                     <div class="col-md-6">
-                        <label class="form-label" for="email">Work Email Address <span class="required-mark">*</span></label>
+                        <label class="form-label" for="email">Work Email Address <span
+                                class="required-mark">*</span></label>
                         <input type="email" class="form-control" id="email" placeholder="name@university.edu" required>
                         <div class="form-text">Will strictly remain confidential.</div>
                     </div>
@@ -283,11 +284,19 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
+            // --- 1. Initialize Supabase ---
+            const supabaseUrl = 'https://pzrdkztbgajvjacqyven.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cmRrenRiZ2FqdmphY3F5dmVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3NjgyMjIsImV4cCI6MjA4MTM0NDIyMn0.rB6KYuNuBXtsh9mIdgnUVfUlOXQ0Jg6MSwdCBvDmaM4';
+            const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
             // Configuration
             const MAX_PAPERS = 10;
+
             const MIN_READ_PAPERS = 5; // Initial render count
             const MIN_OWN_PAPERS = 5;  // Initial render count for optional section
 
@@ -424,32 +433,26 @@
                         }
                     });
 
-                    const payload = {
-                        profile: { email, profileLink },
-                        ownPapers,
-                        readPapers,
-                        submittedAt: new Date().toISOString()
-                    };
+                    // Send to Supabase
+                    const { data, error } = await _supabase
+                        .from('submissions')
+                        .insert([
+                            {
+                                email: email,
+                                profile_link: profileLink,
+                                own_papers: ownPapers,
+                                read_papers: readPapers
+                            },
+                        ]);
 
-                    const response = await fetch('/api/submit', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
+                    if (error) throw error;
 
-                    if (response.ok) {
-                        alert('Thank you! Your survey has been submitted successfully.');
-                        window.location.reload();
-                    } else {
-                        const errText = await response.text();
-                        alert('Submission failed: ' + errText);
-                    }
+                    alert('Thank you! Your survey has been submitted successfully.');
+                    window.location.reload();
 
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('An error occurred during submission. Please try again.');
+                    alert('Submission failed: ' + error.message);
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnText;
